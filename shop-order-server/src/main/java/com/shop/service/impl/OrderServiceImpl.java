@@ -3,6 +3,7 @@ package com.shop.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.shop.dao.OrderDao;
 import com.shop.dao.Product;
+import com.shop.fengin.ProductFeignApi;
 import com.shop.pojo.Order;
 import com.shop.service.OrderService;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +23,8 @@ public class OrderServiceImpl implements OrderService {
     private OrderDao orderDao;
     @Autowired
     private RestTemplate restTemplate;
+    @Autowired
+    private ProductFeignApi productFeignApi;
 
 //    @Autowired
 //    private DiscoveryClient discoveryClient;
@@ -41,9 +44,11 @@ public class OrderServiceImpl implements OrderService {
         String url = host+":"+port;
         log.info(">>从nacos中获取到的微服务地址为:" + url);*/
         Product product = null;
+//        //远程调用商品微服务,查询商品信息
+//         product = restTemplate.getForObject(
+//                "http://product-service/product/get?pid="+productId,Product.class);
         //远程调用商品微服务,查询商品信息
-         product = restTemplate.getForObject(
-                "http://product-service/product/get?pid="+productId,Product.class);
+         product = productFeignApi.findByPid(productId);
         log.info("查询到{}号商品的信息,内容是:{}", productId, JSON.toJSONString(product));
 
         //创建订单并保存

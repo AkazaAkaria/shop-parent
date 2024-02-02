@@ -9,3 +9,32 @@ String url =“http://product-service/product/get?pid="+productld;
 在真正发送请求之前，将服务名替换成具体的IP和端口信息
 String url = *http://192.168.1.17:8081/product/get?pid=*+productld;
 ===>最后再发起远程调用
+
+Feign是Spring Cloud提供的一个声明式的伪Http客户端， 它使得调用远程服务就像调用本地服务一样简单， 只需要创建一个接口并添加一个注解即可。
+Nacos很好的兼容了Feign， Feign默认集成了 LoadBalancer， 所以在Nacos下使用Fegin默认就实现了负载均衡的效果。
+@FeignClient(name =“product-service”,path ="/product")
+public interface ProductFeignApi{
+//http://product-service/product/get?pid=1
+@RequestMapping(/get")
+Product get(@RequestParam(*pid") Long pid);
+}
+启动类中贴了@EnableFeignClients，扫描当前包及其子包下所有的@FeignClient注解的接口
+给这些接口创建动态代理类对象
+调用代理类的方法的时候，I
+可以基于反射的机制，可以拿到当前的对象所有的接口
+可以获取到接口上的注解信息===>http://product-service/product/get?pid=1
+最终使用RestTemplate对路径做解析，把服务名替换成具体的IP信息
+===> http://192.168.1.17:8081/product/get?pid=1
+发起http请求，实现远程调用根据接口的返回值，将返回结果解析返回值的类型。最终返回给调用者，
+
+基于动态代理+反射====》根据注解信息拼接URL地址，基于RestTemplate实现远程调用
+
+要防止雪崩的扩散，我们就要做好服务的容错，容错说白了就是保护自己不被猪队友拖垮的一些措
+
+施, 下面介绍常见的服务容错思路和组件。
+
+**常见的容错思路**
+
+常见的容错思路有隔离、超时、限流、熔断、降级这几种，下面分别介绍一下
+
+
