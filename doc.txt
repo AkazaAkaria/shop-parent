@@ -1,0 +1,11 @@
+loadbalancer如何实现负载均衡
+LoadBalancer默认提供了两种负载均衡策略。
+- 1.RandomLoadBalancer-随机分配策略
+- 2.RoundRobinLoadBalancer-轮询分配策略（默认）
+
+loadbalancer自动装配类中，当贴@LoadBalanced，设置拦截器，RestTemplate发送请求的之前，对请求的URL做处理
+String url =“http://product-service/product/get?pid="+productld;
+真正发送请求之前，截取路径中的product-service，根据客户端的服务列表，找到该服务所对应的IP和端口
+在真正发送请求之前，将服务名替换成具体的IP和端口信息
+String url = *http://192.168.1.17:8081/product/get?pid=*+productld;
+===>最后再发起远程调用
